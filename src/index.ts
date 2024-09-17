@@ -22,8 +22,6 @@ export default {
         new Promise<void>((resolve) => {
           promiseResolvers.push(resolve);
         });
-        // we will never actually get here since the previous
-        // promise will never resolve
 
         await sleep(5000);
         return new Response("resolved");
