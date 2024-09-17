@@ -10,12 +10,16 @@ export default {
         await new Promise<void>((resolve) => {
           promiseResolvers.push(resolve);
         }).then(() => {
+          // this never gets called
           return new Response("resolved");
         });
       }
       case "GET /resolve": {
+        // this throws uncaught exceptions
         promiseResolvers.forEach((resolve) => resolve());
-        return new Response("Resolved");
+
+        // so we do reach here
+        return new Response("resolved all");
       }
       default: {
         return new Response("Not Found", { status: 404 });
