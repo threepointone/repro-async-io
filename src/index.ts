@@ -2,16 +2,30 @@ type Env = {};
 
 const promiseResolvers: (() => void)[] = [];
 
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), ms);
+  });
+}
+
+let ctr = 0;
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    console.log("fetch", ctr++);
+    if (ctr > 1) {
+      console.log("reusing isolate");
+    }
     const url = new URL(request.url);
     switch (`${request.method} ${url.pathname}`) {
       case "GET /": {
-        await new Promise<void>((resolve) => {
+        new Promise<void>((resolve) => {
           promiseResolvers.push(resolve);
         });
         // we will never actually get here since the previous
         // promise will never resolve
+
+        await sleep(5000);
         return new Response("resolved");
       }
       case "GET /resolve": {
