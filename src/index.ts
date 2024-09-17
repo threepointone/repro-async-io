@@ -9,10 +9,10 @@ export default {
       case "GET /": {
         await new Promise<void>((resolve) => {
           promiseResolvers.push(resolve);
-        }).then(() => {
-          // this never gets called
-          return new Response("resolved");
         });
+        // we will never actually get here since the previous
+        // promise will never resolve
+        return new Response("resolved");
       }
       case "GET /resolve": {
         // this throws uncaught exceptions
