@@ -1,0 +1,17 @@
+{
+  "name": "repro-async-io",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "typescript": "^5.6.2",
+    "wrangler": "^3.78.3"
+  }
+}
