@@ -1,41 +1,26 @@
-type Env = {};
-
-const promiseResolvers: (() => void)[] = [];
-
-function sleep(ms: number) {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => resolve(), ms);
-  });
+declare global {
+  var resolve: () => void;
 }
 
-let ctr = 0;
+async function setupWaiter(ctx: ExecutionContext) {
+  const { promise, resolve } = Promise.withResolvers();
+  setTimeout(resolve, 1000);
+  ctx.waitUntil(promise);
+}
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
-    console.log("fetch", ctr++);
-    if (ctr > 1) {
-      console.log("reusing isolate");
+  async fetch(req, env, ctx) {
+    if (globalThis.resolve === undefined) {
+      setupWaiter(ctx);
+      const { promise, resolve } = Promise.withResolvers<void>();
+      globalThis.resolve = resolve;
+      const ab = AbortSignal.abort();
+      await promise;
+      ab.aborted;
+      return new Response("ok");
     }
-    const url = new URL(request.url);
-    switch (`${request.method} ${url.pathname}`) {
-      case "GET /": {
-        new Promise<void>((resolve) => {
-          promiseResolvers.push(resolve);
-        });
 
-        await sleep(5000);
-        return new Response("resolved");
-      }
-      case "GET /resolve": {
-        // this throws uncaught exceptions
-        promiseResolvers.forEach((resolve) => resolve());
-
-        // so we do reach here
-        return new Response("resolved all");
-      }
-      default: {
-        return new Response("Not Found", { status: 404 });
-      }
-    }
+    globalThis.resolve();
+    return new Response("ok");
   },
-} satisfies ExportedHandler<Env>;
+} satisfies ExportedHandler;
