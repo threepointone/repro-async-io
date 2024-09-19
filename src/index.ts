@@ -1,5 +1,5 @@
 declare global {
-  var resolve: () => void;
+  var resolve: undefined | (() => void);
 }
 
 async function setupWaiter(ctx: ExecutionContext) {
@@ -21,6 +21,7 @@ export default {
     }
 
     globalThis.resolve();
+    delete globalThis.resolve;
     return new Response("ok");
   },
 } satisfies ExportedHandler;
