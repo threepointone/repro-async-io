@@ -2,6 +2,10 @@ declare global {
   var resolve: undefined | (() => void);
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function setupWaiter(ctx: ExecutionContext) {
   const { promise, resolve } = Promise.withResolvers();
   setTimeout(resolve, 1000);
@@ -14,6 +18,7 @@ export default {
       setupWaiter(ctx);
       const { promise, resolve } = Promise.withResolvers<void>();
       globalThis.resolve = resolve;
+      await sleep(2000);
       const ab = AbortSignal.abort();
       await promise;
       ab.aborted;

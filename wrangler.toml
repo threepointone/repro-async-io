@@ -1,3 +1,4 @@
 name = "async-io-repro"
 main = "src/index.ts"
 compatibility_date = "2024-09-09"
+compatibility_flags = ["handle_cross_request_promise_resolution"]
